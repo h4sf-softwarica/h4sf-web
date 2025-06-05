@@ -42,14 +42,14 @@ const Index = () => {
         formData.append('chunk_index', chunkIndex.toString());
         formData.append('total_chunks', totalChunks.toString());
 
-        await fetch(`${import.meta.env.VITE_SERVER_IP}/api/upload-chunk/`, {
+        await fetch(`${import.meta.env.VITE_SERVER_IP}/upload-chunk/`, {
           method: 'POST',
           body: formData,
         });
       }
 
       // Call analysis endpoint after all chunks uploaded
-      const analysisResponse = await fetch(`${import.meta.env.VITE_SERVER_IP}/api/generate-analysis/`, {
+      const analysisResponse = await fetch(`${import.meta.env.VITE_SERVER_IP}/generate-analysis/`, {
         method: 'POST',
         body: JSON.stringify({ upload_id: uploadId }),
         headers: { 'Content-Type': 'application/json' },
