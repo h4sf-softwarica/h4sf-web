@@ -11,6 +11,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ videoUrl }) => {
       <video
         src={videoUrl}
         controls
+        autoPlay
+        muted
         className="w-full max-h-96 object-contain"
         preload="metadata"
       >

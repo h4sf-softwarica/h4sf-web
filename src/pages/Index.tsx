@@ -1,10 +1,11 @@
+
 import React, { useState } from 'react';
 import VideoUpload from '@/components/VideoUpload';
 import VideoPlayer from '@/components/VideoPlayer';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import ResponseDisplay from '@/components/ResponseDisplay';
 import { Button } from '@/components/ui/button';
-import { Video, Zap } from 'lucide-react';
+import { Video, Zap, Upload } from 'lucide-react';
 
 const Index = () => {
   const [uploadedVideo, setUploadedVideo] = useState<File | null>(null);
@@ -62,7 +63,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen bg-gray-900 text-white font-poppins">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-12">
@@ -88,8 +89,9 @@ const Index = () => {
                   <Button 
                     onClick={resetUpload}
                     variant="outline"
-                    className="border-gray-600 text-gray-300 hover:bg-gray-700"
+                    className="border-gray-600 text-black hover:bg-gray-700 bg-white"
                   >
+                    <Upload className="mr-2 h-4 w-4" />
                     Upload New Video
                   </Button>
                 </div>
