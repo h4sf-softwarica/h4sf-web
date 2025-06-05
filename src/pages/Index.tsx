@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import VideoUpload from '@/components/VideoUpload';
 import VideoPlayer from '@/components/VideoPlayer';
@@ -91,8 +90,7 @@ const Index = () => {
                     variant="outline"
                     className="border-gray-600 text-gray-300 hover:bg-gray-700"
                   >
-                    <Video className="mr-2 h-4 w-4" />
-                    New Video
+                    Upload New Video
                   </Button>
                 </div>
                 <VideoPlayer videoUrl={videoUrl} />
