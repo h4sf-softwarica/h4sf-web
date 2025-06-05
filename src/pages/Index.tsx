@@ -5,7 +5,7 @@ import VideoPlayer from '@/components/VideoPlayer';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import ResponseDisplay from '@/components/ResponseDisplay';
 import { Button } from '@/components/ui/button';
-import { Upload, Zap } from 'lucide-react';
+import { Video, Zap } from 'lucide-react';
 
 const Index = () => {
   const [uploadedVideo, setUploadedVideo] = useState<File | null>(null);
@@ -68,10 +68,10 @@ const Index = () => {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-            Video Render Studio
+            Video Analysis
           </h1>
           <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            Upload your videos, render them instantly, and get AI-powered analysis with our modern processing platform
+            Upload your videos, analyze them instantly, and get AI-powered insights with our modern processing platform
           </p>
         </div>
 
@@ -91,7 +91,8 @@ const Index = () => {
                     variant="outline"
                     className="border-gray-600 text-gray-300 hover:bg-gray-700"
                   >
-                    Upload New Video
+                    <Video className="mr-2 h-4 w-4" />
+                    New Video
                   </Button>
                 </div>
                 <VideoPlayer videoUrl={videoUrl} />
@@ -112,7 +113,7 @@ const Index = () => {
                   ) : (
                     <>
                       <Zap className="mr-2 h-5 w-5" />
-                      Render & Analyze Video
+                      Analyze Video
                     </>
                   )}
                 </Button>
