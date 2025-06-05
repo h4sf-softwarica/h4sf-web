@@ -1,11 +1,10 @@
-
 import React, { useState } from 'react';
 import VideoUpload from '@/components/VideoUpload';
 import VideoPlayer from '@/components/VideoPlayer';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import ResponseDisplay from '@/components/ResponseDisplay';
 import { Button } from '@/components/ui/button';
-import { Video, Zap, Upload } from 'lucide-react';
+import { Zap, Upload } from 'lucide-react';
 
 const Index = () => {
   const [uploadedVideo, setUploadedVideo] = useState<File | null>(null);
@@ -13,27 +12,50 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [apiResponse, setApiResponse] = useState<string>('');
 
-  const handleVideoUpload = (file: File) => {
+  // When user selects a file, save it and create preview URL
+  const handleVideoSelected = (file: File) => {
     setUploadedVideo(file);
-    const url = URL.createObjectURL(file);
-    setVideoUrl(url);
-    setApiResponse(''); // Clear previous response
+    setVideoUrl(URL.createObjectURL(file));
+    setApiResponse('');
   };
 
-  const handleRenderVideo = async () => {
+  // Chunk upload + analysis triggered on button click
+  const handleAnalyzeVideo = async () => {
     if (!uploadedVideo) return;
 
     setIsLoading(true);
+    setApiResponse('');
 
-    const formData = new FormData();
-    formData.append('video', uploadedVideo);
+    const chunkSize = 1024 * 1024; // 1MB chunks
+    const totalChunks = Math.ceil(uploadedVideo.size / chunkSize);
+    const uploadId = Date.now().toString();
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_SERVER_IP}/api/generate-analysis/`, {
+      for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
+        const start = chunkIndex * chunkSize;
+        const end = Math.min(uploadedVideo.size, start + chunkSize);
+        const chunk = uploadedVideo.slice(start, end);
+
+        const formData = new FormData();
+        formData.append('chunk', chunk);
+        formData.append('upload_id', uploadId);
+        formData.append('chunk_index', chunkIndex.toString());
+        formData.append('total_chunks', totalChunks.toString());
+
+        await fetch(`${import.meta.env.VITE_SERVER_IP}/api/upload-chunk/`, {
+          method: 'POST',
+          body: formData,
+        });
+      }
+
+      // Call analysis endpoint after all chunks uploaded
+      const analysisResponse = await fetch(`${import.meta.env.VITE_SERVER_IP}/api/generate-analysis/`, {
         method: 'POST',
-        body: formData,
+        body: JSON.stringify({ upload_id: uploadId }),
+        headers: { 'Content-Type': 'application/json' },
       });
-      const data = await response.json();
+
+      const data = await analysisResponse.json();
       setApiResponse(data.result || 'No result received.');
     } catch (error) {
       setApiResponse('Error processing video. Please try again.');
@@ -42,14 +64,14 @@ const Index = () => {
     }
   };
 
-
+  // Reset upload and UI states
   const resetUpload = () => {
     setUploadedVideo(null);
-    setVideoUrl('');
-    setApiResponse('');
     if (videoUrl) {
       URL.revokeObjectURL(videoUrl);
+      setVideoUrl('');
     }
+    setApiResponse('');
   };
 
   return (
@@ -58,7 +80,7 @@ const Index = () => {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-            FREEZO<span style={{color: "rgb(8, 186, 153)"}}>SCAN</span>
+            FREEZO<span style={{ color: 'rgb(8, 186, 153)' }}>SCAN</span>
           </h1>
           <p className="text-xl text-gray-400 max-w-2xl mx-auto">
             Upload your videos, analyze them instantly, and get AI-powered insights with our Model
@@ -67,9 +89,8 @@ const Index = () => {
 
         {/* Main Content */}
         <div className="max-w-4xl mx-auto space-y-8">
-          {/* Upload Section */}
           {!uploadedVideo ? (
-            <VideoUpload onVideoUpload={handleVideoUpload} />
+            <VideoUpload onVideoUpload={handleVideoSelected} />
           ) : (
             <div className="space-y-6">
               {/* Video Preview */}
@@ -88,10 +109,10 @@ const Index = () => {
                 <VideoPlayer videoUrl={videoUrl} />
               </div>
 
-              {/* Render Button */}
+              {/* Analyze Button */}
               <div className="text-center">
                 <Button
-                  onClick={handleRenderVideo}
+                  onClick={handleAnalyzeVideo}
                   disabled={isLoading}
                   className="bg-white text-gray-900 hover:bg-gray-100 px-8 py-6 text-lg font-semibold rounded-xl transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
                 >
@@ -121,9 +142,7 @@ const Index = () => {
               )}
 
               {/* API Response */}
-              {apiResponse && !isLoading && (
-                <ResponseDisplay response={apiResponse} />
-              )}
+              {apiResponse && !isLoading && <ResponseDisplay response={apiResponse} />}
             </div>
           )}
         </div>
