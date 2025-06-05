@@ -24,34 +24,24 @@ const Index = () => {
     if (!uploadedVideo) return;
 
     setIsLoading(true);
-    
+
+    const formData = new FormData();
+    formData.append('video', uploadedVideo);
+
     try {
-      // Simulate API call - replace with your actual API endpoint
-      const formData = new FormData();
-      formData.append('video', uploadedVideo);
-      
-      // Mock API call with timeout to simulate processing
-      await new Promise(resolve => setTimeout(resolve, 3000));
-      
-      // Mock response - replace with actual API call
-      const mockResponse = `Video analysis complete! 
-      
-      Video Details:
-      - Duration: ${Math.floor(Math.random() * 60 + 30)} seconds
-      - Format: ${uploadedVideo.type}
-      - Size: ${(uploadedVideo.size / (1024 * 1024)).toFixed(2)} MB
-      - Processing Status: Successfully analyzed
-      
-      AI Analysis:
-      The uploaded video has been processed successfully. The content appears to be of high quality with good lighting and composition. The video processing pipeline has extracted key frames and performed content analysis.`;
-      
-      setApiResponse(mockResponse);
+      const response = await fetch(`${import.meta.env.VITE_SERVER_IP}/api/generate-analysis/`, {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await response.json();
+      setApiResponse(data.result || 'No result received.');
     } catch (error) {
       setApiResponse('Error processing video. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
+
 
   const resetUpload = () => {
     setUploadedVideo(null);
@@ -68,10 +58,10 @@ const Index = () => {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-            Video Analysis
+            FREEZO<span style={{color: "rgb(8, 186, 153)"}}>SCAN</span>
           </h1>
           <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            Upload your videos, analyze them instantly, and get AI-powered insights with our modern processing platform
+            Upload your videos, analyze them instantly, and get AI-powered insights with our Model
           </p>
         </div>
 
@@ -86,7 +76,7 @@ const Index = () => {
               <div className="bg-gray-800 rounded-2xl p-6 border border-gray-700">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-2xl font-semibold">Video Preview</h2>
-                  <Button 
+                  <Button
                     onClick={resetUpload}
                     variant="outline"
                     className="border-gray-600 text-black hover:bg-gray-700 bg-white"

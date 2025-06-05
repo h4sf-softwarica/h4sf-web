@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { CheckCircle } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 
 interface ResponseDisplayProps {
   response: string;
@@ -16,7 +17,7 @@ const ResponseDisplay: React.FC<ResponseDisplayProps> = ({ response }) => {
       
       <div className="bg-gray-900 rounded-xl p-6 border border-gray-600">
         <pre className="whitespace-pre-wrap text-gray-100 font-mono text-sm leading-relaxed">
-          {response}
+          <ReactMarkdown>{response}</ReactMarkdown>
         </pre>
       </div>
     </div>
