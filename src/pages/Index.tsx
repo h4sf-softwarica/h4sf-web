@@ -100,7 +100,7 @@ const Index = () => {
                   <Button
                     onClick={resetUpload}
                     variant="outline"
-                    className="border-gray-600 text-black hover:bg-gray-700 bg-white"
+                    className="border-gray-600 text-black hover:bg-gray-700 hover:border-gray-700 hover:text-white bg-white"
                   >
                     <Upload className="mr-2 h-4 w-4" />
                     Upload New Video
