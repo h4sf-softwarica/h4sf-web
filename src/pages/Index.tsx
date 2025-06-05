@@ -4,7 +4,7 @@ import VideoPlayer from '@/components/VideoPlayer';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import ResponseDisplay from '@/components/ResponseDisplay';
 import { Button } from '@/components/ui/button';
-import { Zap, Upload } from 'lucide-react';
+import { Zap, Upload, Download } from 'lucide-react';
 
 const Index = () => {
   const [uploadedVideo, setUploadedVideo] = useState<File | null>(null);
@@ -142,7 +142,30 @@ const Index = () => {
               )}
 
               {/* API Response */}
-              {apiResponse && !isLoading && <ResponseDisplay response={apiResponse} />}
+              {apiResponse && !isLoading && (
+                <>
+                  <ResponseDisplay response={apiResponse} />
+                  <div className="text-center mt-6">
+                    <Button
+                      onClick={() => {
+                        const blob = new Blob([apiResponse], { type: 'text/plain' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'analysis.txt';
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                      }}
+                      className="bg-teal-500 hover:bg-teal-600 text-white px-6 py-3 rounded-lg text-base transition-all duration-200 hover:scale-105 inline-flex items-center"
+                    >
+                      <Download className="mr-2 h-5 w-5" />
+                      Download Analysis
+                    </Button>
+                  </div>
+                </>
+              )}
             </div>
           )}
         </div>
